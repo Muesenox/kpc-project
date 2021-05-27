@@ -1,10 +1,11 @@
 import React from 'react';
-import './App.css';
+import UserForm from "./components/UserForm";
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div>
-      <h1>Single Page Application</h1> 
+    <div className="container">
+      <h1 className="text-center mt-2 mb-4">Single Page Application</h1> 
+      <UserForm />
     </div>
   );
 }

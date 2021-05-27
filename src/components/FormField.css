@@ -1,0 +1,22 @@
+.error-message {
+  font-size: 13px;
+  margin-right: 8%;
+}
+
+.input-form {
+  margin-top: 24px;
+}
+
+.check-box {
+  margin-top: 32px;
+}
+
+.label-form {
+  margin-top: 31px;
+}
+
+@media only screen and (max-width: 991px) {
+  .input-form {
+    margin-top: 1px;
+  }
+}
