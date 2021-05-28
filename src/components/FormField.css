@@ -19,4 +19,7 @@
   .input-form {
     margin-top: 1px;
   }
+  .error-message {
+    margin-right: 0;
+  }
 }
