@@ -1,13 +1,22 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
 import { reduxForm, Field, FormErrors } from "redux-form";
+import { useSelector, useDispatch } from "react-redux";
 import FormField from "./FormField";
+import formActions from '../actions/formActions';
+import UserTable from "./UserTable";
 import { userFormField } from "../formTemplates";
 import { IUserFormField,
          IUserFormData,
-         TValidationName
+         TValidationName,
+         IMapStateToPropsOnUserForm,
+         IRootReducer,
         } from "../type";
 
-const UserForm: React.FC = () => {
+
+const UserForm: React.FC<any> = ({ handleSubmit }) => {
+    const { form, user } = useSelector((state: IRootReducer) => state);
+    const dispatch = useDispatch();
 
     const rederFields = (userFormField: IUserFormField[]) => {
         return userFormField.map( ({ label,  name, type, required }) => (
@@ -15,20 +24,36 @@ const UserForm: React.FC = () => {
         ));
     }
 
+    useEffect(() => {
+        dispatch(formActions.fetchData()); // eslint-disable-next-line
+    }, []);
+    
     return (
-        <div className="card p-4">
-            <form className="row">
-                {rederFields(userFormField)}
-                <div className="col-lg-auto">
-                    <button type="submit" className="btn btn-primary mt-4">Submit</button>
-                </div>
-            </form>
+        <div>
+            <div className="card p-4">
+                <form className="row" 
+                    onSubmit={handleSubmit(() => {
+                        if (Object.keys(user.update).length === 0) dispatch(formActions.createData(form?.userForm?.values));
+                        else dispatch(formActions.updateData(form?.userForm?.values, user.updateIndex as number));
+                    })}
+                >
+                    {rederFields(userFormField)}
+                    <div className="col-lg-auto">
+                        <button 
+                            type="submit" 
+                            className="btn btn-primary mt-4"
+                        >
+                            Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <UserTable users={user?.data} />
         </div>
     );
 }
 
 const validate = (values: IUserFormData) => {
-    console.log('values --> ', values);
     let errors: FormErrors<IUserFormData> = {};
     userFormField.forEach(({ name, required, type }) => {
         const implicitName: TValidationName = name as TValidationName;
@@ -46,4 +71,12 @@ const validate = (values: IUserFormData) => {
     return errors;
 }
 
-export default reduxForm({ validate, form: "userForm"})(UserForm);
+const mapStateToProps = ({ user }: IMapStateToPropsOnUserForm) => {
+    if (Object.keys(user.update).length !== 0) {
+        return {
+            initialValues: user.update,
+        }
+    }
+  }
+
+export default connect(mapStateToProps)(reduxForm({ validate, form: "userForm", enableReinitialize : true })(UserForm));

@@ -13,6 +13,21 @@ export interface IUserFormField {
     required: boolean
 }
 
+export interface IUserReducer {
+    data: IUserFormData[],
+    update: Partial<IUserFormData>,
+    updateIndex?: number,
+}
+
+export interface IRootReducer {
+    form: any,
+    user: IUserReducer,
+}
+
+export interface IMapStateToPropsOnUserForm {
+    user: IUserReducer,
+}
+
 export interface IUserFormData {
     title: string,
     firstName: string,
